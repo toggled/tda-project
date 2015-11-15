@@ -25,7 +25,7 @@ class SimplicialComplex:
         self.tableofksimplex = {}  # key = k , value = list of k-simplices in the simplicial_complex
         self.maxK = 0  # Keep track of highest Dimensional simplex in the complex
 
-    def get_kth_chain(self, k):
+    def get_allkth_simplices(self, k):
         return self.tableofksimplex[k]
 
     def add_simplex_fromfile(self, filename):
