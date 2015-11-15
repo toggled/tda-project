@@ -3,6 +3,7 @@ class KSimplex:
         self.kvertices = listofvertices
         self.k = len(listofvertices) - 1
         self.name = str(self.k) + '-simplex: ' + str(listofvertices)
+        self.id = -1  # This id is used as index while building transformation matrix
 
     def __str__(self):
         # return self.name
@@ -24,6 +25,7 @@ class SimplicialComplex:
         self.simplex = []  # Stores all the simplices in the complex
         self.tableofksimplex = {}  # key = k , value = list of k-simplices in the simplicial_complex
         self.maxK = 0  # Keep track of highest Dimensional simplex in the complex
+        self.count_id = {}  # for assigning unique id to each set of simplex
 
     def get_allkth_simplices(self, k):
         return self.tableofksimplex[k]
@@ -52,7 +54,11 @@ class SimplicialComplex:
         self.simplex.append(ksimplex)
         if self.tableofksimplex.get(ksimplex.k, None) is None:
             self.tableofksimplex[ksimplex.k] = []
+            self.count_id[ksimplex.k] = 0
         self.tableofksimplex[ksimplex.k].append(ksimplex)
+        ksimplex.id = self.count_id[ksimplex.k]  # assigning id
+        self.count_id[ksimplex.k] += 1  # increasing id for the next k-simplex's id to be id+1
+
         self.maxK = [self.maxK, ksimplex.k][
             ksimplex.k > self.maxK]  # update maxK if a higher dimensional simplex is added
 

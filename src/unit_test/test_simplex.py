@@ -3,6 +3,7 @@ from src.simplex import KSimplex, SimplicialComplex
 from src.boundaryoperator import Boundary
 from src.BoundaryGroup import KthBoundaryGroup
 
+
 def test_manual_simplex():
     sim = KSimplex([1, 2, 3])
     C = SimplicialComplex()
@@ -53,15 +54,18 @@ def test_kth_boundary_group():
     sigma = SimplicialComplex()
     sigma.add_simplex_fromfile('test_simplexfromfile.txt')
 
-    for k in range(sigma.maxK):  # not maxK + 1
+    # for k in range(sigma.maxK):  # not maxK + 1
+    for k in range(0, 3):  # not maxK + 1
         print str(k) + '-th Boundary group:'
         Bk = KthBoundaryGroup(k)
-        Bk.construct_from_simplex(sigma.get_allkth_simplices(k + 1))  # Send all the k+1 simplices to it
-        print Bk
+        Bk.construct_from_simplex(sigma.get_allkth_simplices(k + 1))  # Send all the k+1 and Kth simplices to it
+        print Bk.build_transformation_matrix()
+        # Bk.print_columnobjects()
+        #Bk.print_rowobjects()
 
 if __name__ == "__main__":
     # test_file_simplex()
     # test_boundary_op()
     # test_nested_boundary()
-# test_nested_boundary_simplicialcomplex()
-# test_kth_boundary_group()
+    # test_nested_boundary_simplicialcomplex()
+    test_kth_boundary_group()
