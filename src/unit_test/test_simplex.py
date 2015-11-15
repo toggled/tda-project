@@ -58,8 +58,8 @@ def test_kth_boundary_group():
     for k in range(0, 3):  # not maxK + 1
         print str(k) + '-th Boundary group:'
         Bk = KthBoundaryGroup(k)
-        Bk.construct_from_simplex(sigma.get_allkth_simplices(k + 1))  # Send all the k+1 and Kth simplices to it
-        print Bk.build_transformation_matrix()
+        Bk.construct_from_simplex(sigma.get_allkth_simplices(k + 1))  # Send all the k+1 simplices to it
+        print Bk.get_transformation_matrix()
         # Bk.print_columnobjects()
         #Bk.print_rowobjects()
 

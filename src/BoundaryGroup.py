@@ -9,7 +9,7 @@ class KthBoundaryGroup:
         self.kth_boundary = []  # list of Objects in Bk.
         self.kplus1_simplices = []
         self.ksimplices = []
-
+        self.dim = K
     def construct_from_simplex(self, list_kplus1_simplices):
         '''
         Given a list of K+1 simplices, Compute the boundary of all those simplices and store them
@@ -42,7 +42,7 @@ class KthBoundaryGroup:
             str_repr += str(boundaryobj) + '\n'
         return str_repr
 
-    def build_transformation_matrix(self):
+    def get_transformation_matrix(self):
         '''
         Builds the transformation matrix from k+1 simplex to k-simplex.
         Objects in the row: sorted(self.lookuptable.items(),key = lambda x: x[1])
@@ -52,7 +52,8 @@ class KthBoundaryGroup:
         # self.rows = np.array(len(self.kplus1_simplices))
         # self.cols = np.array(len(self.ksimplices))
         self.transformation_matrix = np.zeros((self.uniqueid, len(self.kplus1_simplices)), dtype=np.int32)
-
+        if self.dim < 0:
+            return self.transformation_matrix
         # print self.lookuptable
         # print self.column_lookuptable
         for col, simplices in enumerate(self.kplus1_simplices):

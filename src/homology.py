@@ -152,56 +152,57 @@ def another_bettinum(d_k, d_kplus1):
     return kernelDim - imageDim
 
 
-'''
-bd0 = numpy.array([[0,0,0,0,0]])
-bd1 = numpy.array([[-1,-1,-1,-1,0,0,0,0], [1,0,0,0,-1,-1,0,0],    [0,1,0,0,1,0,-1,-1], [0,0,1,0,0,1,1,0], [0,0,0,1,0,0,0,1]])
-bd2 = numpy.array([[1,1,0,0],[-1,0,1,0],[0,-1,-1,0],
-     [0,0,0,0],[1,0,0,1],[0,1,0,-1],
-     [0,0,1,1],[0,0,0,0]])
-bd3 = numpy.array([[-1],[1],[-1],[1]])
-'''
+if __name__ == '__main__':
+    '''
+    bd0 = numpy.array([[0,0,0,0,0]])
+    bd1 = numpy.array([[-1,-1,-1,-1,0,0,0,0], [1,0,0,0,-1,-1,0,0],    [0,1,0,0,1,0,-1,-1], [0,0,1,0,0,1,1,0], [0,0,0,1,0,0,0,1]])
+    bd2 = numpy.array([[1,1,0,0],[-1,0,1,0],[0,-1,-1,0],
+         [0,0,0,0],[1,0,0,1],[0,1,0,-1],
+         [0,0,1,1],[0,0,0,0]])
+    bd3 = numpy.array([[-1],[1],[-1],[1]])
+    '''
+    bd0 = numpy.array([[0, 0, 0, 0]])
+    # bd1 = numpy.array([[-1,0,0,-1,-1], [1,-1,0,0,0], [0,1,-1,0,1], [0,0,1,1,0]])
 
-bd0 = numpy.array([[0, 0, 0, 0]])
-# bd1 = numpy.array([[-1,0,0,-1,-1], [1,-1,0,0,0], [0,1,-1,0,1], [0,0,1,1,0]])
+    # bd0 = numpy.array([[0,0,0,0,0]])
+    # bd1 = numpy.array([[-1,0,0,-1,1], [1,-1,0,0,0], [0,1,-1,0,-1], [0,0,1,1,0], [0,0,0,0,0]])
+    bd1 = numpy.array(
+        [[-1, 0, 1, 1, 0, 1, 0, 0], [1, -1, 0, 0, 0, 0, -1, 0], [0, 1, -1, 0, 0, 0, 0, -1], [0, 0, 0, -1, -1, 0, 1, 1],
+         [0, 0, 0, 0, 1, -1, 0, 0]])
+    bd2 = numpy.array(
+        [[1, 0, 0, 1], [1, 0, 1, 0], [1, -1, 0, 0], [0, 1, 0, 1], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, -1, 1],
+         [0, 1, 1, 0]])
+    print("Example complex from post")
+    # print("0th homology: %d" % bettiNumber(bd0,bd1))
+    # print "another way to compute betti number: ",another_bettinum(bd1,bd2)
+    # print Matrix(bd1.T).rref()
 
-# bd0 = numpy.array([[0,0,0,0,0]])
-# bd1 = numpy.array([[-1,0,0,-1,1], [1,-1,0,0,0], [0,1,-1,0,-1], [0,0,1,1,0], [0,0,0,0,0]])
-bd1 = numpy.array(
-    [[-1, 0, 1, 1, 0, 1, 0, 0], [1, -1, 0, 0, 0, 0, -1, 0], [0, 1, -1, 0, 0, 0, 0, -1], [0, 0, 0, -1, -1, 0, 1, 1],
-     [0, 0, 0, 0, 1, -1, 0, 0]])
-bd2 = numpy.array(
-    [[1, 0, 0, 1], [1, 0, 1, 0], [1, -1, 0, 0], [0, 1, 0, 1], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, -1, 1], [0, 1, 1, 0]])
-print("Example complex from post")
-# print("0th homology: %d" % bettiNumber(bd0,bd1))
-# print "another way to compute betti number: ",another_bettinum(bd1,bd2)
-# print Matrix(bd1.T).rref()
+    print("1st homology: %d" % bettiNumber(bd1, bd2))
+    print "another way to compute betti number: ", another_bettinum(bd1, bd2)
+    sys.exit(1)
+    print("2nd homology: %d" % bettiNumber(bd2, bd3))
+    print "another way to compute betti number: ", another_bettinum(bd2, bd3)
 
-print("1st homology: %d" % bettiNumber(bd1, bd2))
-print "another way to compute betti number: ", another_bettinum(bd1, bd2)
-sys.exit(1)
-print("2nd homology: %d" % bettiNumber(bd2, bd3))
-print "another way to compute betti number: ", another_bettinum(bd2, bd3)
+    mobiusD1 = numpy.array([
+        [-1, -1, -1, -1, 0, 0, 0, 0, 0, 0],
+        [1, 0, 0, 0, -1, -1, -1, 0, 0, 0],
+        [0, 1, 0, 0, 1, 0, 0, -1, -1, 0],
+        [0, 0, 0, 1, 0, 0, 1, 0, 1, 1],
+    ])
 
-mobiusD1 = numpy.array([
-    [-1, -1, -1, -1, 0, 0, 0, 0, 0, 0],
-    [1, 0, 0, 0, -1, -1, -1, 0, 0, 0],
-    [0, 1, 0, 0, 1, 0, 0, -1, -1, 0],
-    [0, 0, 0, 1, 0, 0, 1, 0, 1, 1],
-])
+    mobiusD2 = numpy.array([
+        [1, 0, 0, 0, 1],
+        [0, 0, 0, 1, 0],
+        [-1, 0, 0, 0, 0],
+        [0, 0, 0, -1, -1],
+        [0, 1, 0, 0, 0],
+        [1, -1, 0, 0, 0],
+        [0, 0, 0, 0, 1],
+        [0, 1, 1, 0, 0],
+        [0, 0, -1, 1, 0],
+        [0, 0, 1, 0, 0],
+    ])
 
-mobiusD2 = numpy.array([
-    [1, 0, 0, 0, 1],
-    [0, 0, 0, 1, 0],
-    [-1, 0, 0, 0, 0],
-    [0, 0, 0, -1, -1],
-    [0, 1, 0, 0, 0],
-    [1, -1, 0, 0, 0],
-    [0, 0, 0, 0, 1],
-    [0, 1, 1, 0, 0],
-    [0, 0, -1, 1, 0],
-    [0, 0, 1, 0, 0],
-])
-
-print("Mobius Band")
-print("1st homology: %d" % bettiNumber(mobiusD1, mobiusD2))
-print "another way to compute betti number: ", another_bettinum(mobiusD1, mobiusD2)
+    print("Mobius Band")
+    print("1st homology: %d" % bettiNumber(mobiusD1, mobiusD2))
+    print "another way to compute betti number: ", another_bettinum(mobiusD1, mobiusD2)
