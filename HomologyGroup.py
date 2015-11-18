@@ -1,37 +1,78 @@
 __author__ = 'Naheed'
-import numpy as np
+
 from copy import deepcopy
-from sympy import Matrix
+from sympy import Matrix, Symbol
+from src.BoundaryGroup import KthBoundaryGroup
+import numpy as np
 
 
-class homology:
-    def __init__(self, delta_k, delta_kplus1):
-        self.delta_k = delta_k
-        self.delta_kplus1 = delta_kplus1
+class Homology:
+    def __init__(self, boundary_group_k, boundary_group_kplus1):
+        """
+        :type boundary_group_k: KthBoundaryGroup
+        :type boundary_group_kplus1: KthBoundaryGroup
+        """
+        assert isinstance(boundary_group_k, KthBoundaryGroup)
+        assert isinstance(boundary_group_kplus1, KthBoundaryGroup)
+        self.delta_k = boundary_group_k.get_transformation_matrix()
+
+        self.delta_kplus1 = boundary_group_kplus1.get_transformation_matrix()
+
+        self.kernel_basis_delta_k = boundary_group_k.get_columnobjects()
+        self.image_basis_delta_kplus1 = boundary_group_kplus1.get_rowobjects()
+
         # self.rowops_delta_k = []*len(self.delta_k.shape[1]) # delta_k is used to compute the kernel dim. i.e num of dependent columns
         # self.rowops_delta_kplus1 = []*len(self.delta_kplus1.shape[0]) # delta_kplus1 is used to compute the image dim, i.e the num of independent rows
 
-    def compute_homology_groups(self):
-        pass
+    def compute_kth_homology_groups(self):
+        """
+        Compute the K-th Homology groups (Hk)
+        :return: Tuple (Basis for kernel space(Zk) and Basis for Image space (Bk)
+        """
+
+        # print self.kernel_basis_delta_k
+        # print self.image_basis_delta_kplus1
+
+        def get_basis_imagespace(reduced_matrix, b_k):
+            zeros = np.zeros(reduced_matrix.shape[1])
+            l = [i for i in range(reduced_matrix.shape[0]) if np.all(reduced_matrix[i, :] == zeros) == False]
+            return b_k[l]
+
+        reduced_mat, operationsets = self.get_reduced_reform(self.delta_kplus1)  # Find the image space (span of Bk)
+        image_spaces = self.interpret_rref(self.image_basis_delta_kplus1, operationsets)
+        generators_imagespace = get_basis_imagespace(reduced_mat, np.array(image_spaces))
+
+        # print image_spaces
+
+        def get_kernel_space(reduced_matrix, z_k):
+            zeros = np.zeros(reduced_matrix.shape[1])
+            l = [i for i in range(reduced_matrix.shape[0]) if np.all(reduced_matrix[i, :] == zeros) == True]
+            return z_k[l]
+
+        reduced_mat2, operationsets2 = self.get_reduced_reform(self.delta_k.T)
+        kernel_spaces = self.interpret_rref(self.kernel_basis_delta_k, operationsets2)
+        kernel_generators = get_kernel_space(reduced_mat2, np.array(kernel_spaces))
+        return (kernel_generators, generators_imagespace)
 
     def compute_betti_number(self):
 
         reduced_mat, operationsets = self.get_reduced_reform(self.delta_kplus1)
 
-        print 'print bk+1: \n', self.delta_kplus1
+        #print 'print bk+1: \n', self.delta_kplus1
         # self.printop_list(operationsets)
-        print 'reduced form of bk+1: \n', reduced_mat
+        #print 'reduced form of bk+1: \n', reduced_mat
 
-        res = self.interpret_rref(reduced_mat, operationsets)
-        print res
+
 
         reduced_mat2, operationsets2 = self.get_reduced_reform(self.delta_k.T)
         # self.printop_list(operationsets2)
-        print 'print bk: \n', self.delta_k.T, '\n'
-        print 'reduced form of bk: \n', reduced_mat2
-        print self.interpret_rref(reduced_mat, operationsets)
+        # print 'print bk: \n', self.delta_k.T, '\n'
+        #print 'reduced form of bk: \n', reduced_mat2
 
-        print "betti: ", (self.delta_k.shape[1] - self.numPivotRows(reduced_mat2)) - self.numPivotRows(reduced_mat)
+
+
+        # print "betti: ", (self.delta_k.shape[1] - self.numPivotRows(reduced_mat2)) - self.numPivotRows(reduced_mat)
+        return (self.delta_k.shape[1] - self.numPivotRows(reduced_mat2)) - self.numPivotRows(reduced_mat)
 
     def printop_list(self, listof_ops):
         """
@@ -44,23 +85,25 @@ class homology:
             print i, ' '
         print '\n'
 
-    def interpret_rref(self, reduced_matrix, listof_ops):
+    def interpret_rref(self, repr_row_simplices, listof_ops):
         """
         Compute the string representation of the operations matrix
-        :param reduced_matrix: Reduced Row echelon form (rref) of the matrix
+        :param repr_row_simplices: Row representation along the rows in the transformation matrix
         :param listof_ops: List of operations performed on the operation matrix to make it rref
         :return: row representation of the rows in the operation matrix
         """
-        string_repr = [""] * len(listof_ops)
-        string_rowrepr = [[""]] * len(listof_ops)
+        # string_repr = [""] * len(listof_ops)
+        string_repr = None
+        string_rowrepr = [0] * len(repr_row_simplices)
 
         def process_next_op(operations_list):
             if len(operations_list) == 3:  # process row combine
+                #print type(operations_list[0]),'hi'
                 idxleft, left = process_next_op(operations_list[0])
                 idxright, right = process_next_op(operations_list[1])
                 # stack.append(left + '=' +left+'+'+right)
                 # return left  # concatenate left string and right string
-                string_repr[idxleft] = string_repr[idxleft] + "+" + string_repr[idxright]
+                string_repr[idxleft] = left + right
                 return idxleft, string_repr[idxleft]
 
             if len(operations_list) == 2:  # process row scaling
@@ -68,24 +111,26 @@ class homology:
                     idx, op = process_next_op(operations_list[0])
                     # stack.append(op+'='+'-'+op)
                     # return op
-                    string_repr[idx] = str(["-" + str([op])])
+                    string_repr[idx] = -op
                     return idx, string_repr[idx]
 
                 return process_next_op(operations_list[0])
             if len(operations_list) == 1:  # base case
-                if type(operations_list) is list:
-                    string_repr[operations_list[0]] = str(operations_list[0])
-                    return operations_list[0], string_repr[operations_list[0]]
-
+                # if type(operations_list) is list:
+                #     string_repr[operations_list[0]] = str(operations_list[0])
+                #     return operations_list[0], string_repr[operations_list[0]]
+                return operations_list[0], string_repr[operations_list[0]]
                     # if type(operations_list) is tuple:
                     #     idx, op = process_next_op(operations_list[0])
                     #     return idx,string_repr[idx]
 
+        #print 'represnetation: ', len(string_rowrepr)
         for idx, operations in enumerate(listof_ops):
+            # print operations
+            string_repr = [Symbol(row) for row in repr_row_simplices]
             process_next_op(operations)
             string_rowrepr[idx] = string_repr[idx]
-            # print string_repr
-
+            #print string_repr
         return string_rowrepr
 
     def get_reduced_reform(self, input_matrix):

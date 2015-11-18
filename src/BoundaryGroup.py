@@ -17,7 +17,8 @@ class KthBoundaryGroup:
         :return: None
         """
         self.kplus1_simplices = list_kplus1_simplices
-        self.lookuptable = {}  # lookup table for storing K dimensional id,simplex mapping
+        # The purpose of self.lookuptable is to store only the k-simplices that occur in the boundary of k+1-simplices
+        self.lookuptable = {}  # lookup table for storing K dimensional id,simplex mapping. key: simplex.kvertices, value: Unique Id
         self.column_lookuptable = {}  # lookup table for storing K+1 dimensional id , simplex mapping
         self.uniqueid = 0
 
@@ -81,3 +82,15 @@ class KthBoundaryGroup:
 
     def print_columnobjects(self):
         print [str(simplex) for simplex in self.kplus1_simplices]
+
+    def get_rowobjects(self):
+        """
+        Returns the string representation of the simplex along the row of the transformation matrix (k-simplex)
+        :rtype: list
+        """
+        row_objects = [object for object, idx in
+                       sorted(self.lookuptable.items(), key=lambda x: x[1])]  # sorted list of objects along the row
+        return [''.join([str(id) for id in eachtuple]) for eachtuple in row_objects]
+
+    def get_columnobjects(self):
+        return [str(simplex) for simplex in self.kplus1_simplices]
