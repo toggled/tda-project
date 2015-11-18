@@ -34,6 +34,8 @@ def rowCombine(A, addTo, scaleRow, scaleAmt):
 
 def simultaneousReduce(A, B):
     print 'inside simultaneous reduce\n'
+    print A.shape
+    print B.shape
     if A.shape[1] != B.shape[0]:
         raise Exception("Matrices have the wrong shape.")
 
@@ -73,7 +75,7 @@ def simultaneousReduce(A, B):
                 rowCombine(B, j, otherCol, -scaleAmt)
                 print A
                 print B
-        i += 1;
+        i += 1
         j += 1
     print 'exiting simultaneous reduce\n'
     return A, B
@@ -148,7 +150,8 @@ def bettiNumber(d_k, d_kplus1):
 def another_bettinum(d_k, d_kplus1):
     kernelDim = Matrix(d_k.T).rref()[0].shape[0] - len(Matrix(d_k.T).rref()[1])
     imageDim = len(Matrix(d_kplus1).rref()[1])
-    # print Matrix(d_kplus1).rref()
+    print 'image space: \n', Matrix(d_kplus1).rref()
+    print 'kernel space: \n', Matrix(d_k.T).rref()
     return kernelDim - imageDim
 
 

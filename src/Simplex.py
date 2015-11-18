@@ -28,7 +28,7 @@ class SimplicialComplex:
         self.count_id = {}  # for assigning unique id to each set of simplex
 
     def get_allkth_simplices(self, k):
-        return self.tableofksimplex[k]
+        return self.tableofksimplex.get(k, [])
 
     def add_simplex_fromfile(self, filename):
         '''
@@ -46,7 +46,7 @@ class SimplicialComplex:
 
     def add_simplex(self, ksimplex):
         '''
-        Add a k-simplex to the simplicial complex
+        Add a k-simplex to the simplicial complex. Can be added in any order and any dimension.
         :param ksimplex:
         :return: None
         '''

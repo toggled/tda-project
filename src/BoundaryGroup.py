@@ -7,15 +7,15 @@ import numpy as np
 class KthBoundaryGroup:
     def __init__(self, K):
         self.kth_boundary = []  # list of Objects in Bk.
-        self.kplus1_simplices = []
-        self.ksimplices = []
+        self.kplus1_simplices = []  # stores k+1 - simplices which will be used to compute the Transformation Matrix
         self.dim = K
+
     def construct_from_simplex(self, list_kplus1_simplices):
-        '''
-        Given a list of K+1 simplices, Compute the boundary of all those simplices and store them
+        """
+        Given a list of K+1 simplices, Compute the boundary of all those simplices, give them unique id and store them
         :param list_kplus1_simplices:
         :return: None
-        '''
+        """
         self.kplus1_simplices = list_kplus1_simplices
         self.lookuptable = {}  # lookup table for storing K dimensional id,simplex mapping
         self.column_lookuptable = {}  # lookup table for storing K+1 dimensional id , simplex mapping
@@ -43,14 +43,15 @@ class KthBoundaryGroup:
         return str_repr
 
     def get_transformation_matrix(self):
-        '''
+        """
         Builds the transformation matrix from k+1 simplex to k-simplex.
         Objects in the row: sorted(self.lookuptable.items(),key = lambda x: x[1])
         Objects in the column: self.kplus1_simplices
         :return:
-        '''
+        """
         # self.rows = np.array(len(self.kplus1_simplices))
         # self.cols = np.array(len(self.ksimplices))
+
         self.transformation_matrix = np.zeros((self.uniqueid, len(self.kplus1_simplices)), dtype=np.int32)
         if self.dim < 0:
             return self.transformation_matrix
