@@ -52,16 +52,18 @@ def test_nested_boundary_simplicialcomplex():
 
 def test_kth_boundary_group():
     sigma = SimplicialComplex()
-    sigma.add_simplex_fromfile('test_simplexfromfile.txt')
+    # sigma.add_simplex_fromfile('test_simplexfromfile.txt')
+    sigma.add_simplex_fromfile("../../data/test_simplexfromfile.txt")
 
     # for k in range(sigma.maxK):  # not maxK + 1
     for k in range(0, 3):  # not maxK + 1
         print str(k) + '-th Boundary group:'
         Bk = KthBoundaryGroup(k)
-        Bk.construct_from_simplex(sigma.get_allkth_simplices(k + 1))  # Send all the k+1 simplices to it
+        Bk.construct_from_simplex(sigma.get_allkth_simplices(k + 1), sigma.simplex_idmap,
+                                  sigma.get_allkth_simplices(k))  # Send all the k+1 simplices to it
         print Bk.get_transformation_matrix()
-        # Bk.print_columnobjects()
-        #Bk.print_rowobjects()
+        Bk.print_columnobjects()
+        Bk.print_rowobjects()
 
 if __name__ == "__main__":
     # test_file_simplex()

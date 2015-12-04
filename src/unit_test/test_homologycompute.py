@@ -15,22 +15,25 @@ if __name__ == '__main__':
     for k in range(0, 1):  # not maxK
         # print str(k + 1) + '-th Transformation Matrix:'
         Bk = KthBoundaryGroup(k)
-        Bk.construct_from_simplex(sigma.get_allkth_simplices(k + 1))  # Send all the k+1 simplices to it
+        Bk.construct_from_simplex(sigma.get_allkth_simplices(k + 1), sigma.simplex_idmap,
+                                  sigma.get_allkth_simplices(k))  # Send all the k+1 simplices to it
         # print Bk.get_transformation_matrix()
         # print Bk.get_columnobjects()
         # print Bk.get_rowobjects()
         m = k + 1
         # print str(m + 1) + '-th Transformation Matrix:'
         Bk1 = KthBoundaryGroup(m)
-        Bk1.construct_from_simplex(sigma.get_allkth_simplices(m + 1))  # Send all the k+1 simplices to it
-        #print Bk1.get_transformation_matrix()
-
-        # Bk.print_columnobjects()
-        # Bk.print_rowobjects()
+        Bk1.construct_from_simplex(sigma.get_allkth_simplices(m + 1), sigma.simplex_idmap,
+                                   sigma.get_allkth_simplices(m))  # Send all the k+1 simplices to it
+        # print Bk1.get_transformation_matrix()
+        #
+        # print Bk1.get_columnobjects()
+        # print Bk1.get_rowobjects()
         homology_obj = Homology(Bk, Bk1)
-        # print 'H', str(k + 1), ' = ', str(homology_obj.compute_betti_number())
+        #print 'H', str(k + 1), ' = ', str(homology_obj.compute_betti_number())
         kth_hom_group = homology_obj.compute_kth_homology_groups()
         print kth_hom_group
+
         # print 'H', str(k + 1), ' = ', bettiNumber(Bk.get_transformation_matrix(), Bk1.get_transformation_matrix())
         # print 'H', str(k + 1), ' = ', another_bettinum(Bk.get_transformation_matrix(), Bk1.get_transformation_matrix())
         # if result == 0:  # if K-th Betti number is 0. the rest will be so

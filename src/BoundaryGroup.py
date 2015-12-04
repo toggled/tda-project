@@ -10,29 +10,30 @@ class KthBoundaryGroup:
         self.kplus1_simplices = []  # stores k+1 - simplices which will be used to compute the Transformation Matrix
         self.dim = K
 
-    def construct_from_simplex(self, list_kplus1_simplices):
+    def construct_from_simplex(self, list_kplus1_simplices, simplex_id_map, list_ksimplices):
         """
         Given a list of K+1 simplices, Compute the boundary of all those simplices, give them unique id and store them
         :param list_kplus1_simplices:
         :return: None
         """
         self.kplus1_simplices = list_kplus1_simplices
+        self.ksimplices = list_ksimplices
         # The purpose of self.lookuptable is to store only the k-simplices that occur in the boundary of k+1-simplices
-        self.lookuptable = {}  # lookup table for storing K dimensional id,simplex mapping. key: simplex.kvertices, value: Unique Id
-        self.column_lookuptable = {}  # lookup table for storing K+1 dimensional id , simplex mapping
-        self.uniqueid = 0
+        self.lookuptable = simplex_id_map
+        # self.column_lookuptable = {}  # lookup table for storing K+1 dimensional id , simplex mapping
+        self.uniqueid = len(list_ksimplices)
 
-        for id, kplus1_simplex in enumerate(list_kplus1_simplices):
+        for kplus1_simplex in list_kplus1_simplices:
             boundary = Boundary()  # deltak+1(k+1 simplex) => k simplex
             boundary.compute_boundary(kplus1_simplex)
-            self.column_lookuptable[tuple(kplus1_simplex.kvertices)] = id
-            for sign, simplex in boundary.boundary:
-                if self.lookuptable.get(tuple(simplex.kvertices), -1) == -1:
-                    self.lookuptable[tuple(simplex.kvertices)] = self.uniqueid
-                    # print tuple(simplex.kvertices)
-                    self.uniqueid += 1
+            # self.column_lookuptable[tuple(kplus1_simplex.kvertices)] = id
+            # for sign, simplex in boundary.boundary:
+            #     if self.lookuptable.get(tuple(simplex.kvertices), -1) == -1:
+            #         self.lookuptable[tuple(simplex.kvertices)] = self.uniqueid
+            #         # print tuple(simplex.kvertices)
+            #         self.uniqueid += 1
             self.kth_boundary.append(boundary)  # the boundary list is inside delta_kplus1
-            kplus1_simplex.id = id
+
 
     def get_kth_boundarygroup(self):
         return self.kth_boundary
@@ -77,8 +78,9 @@ class KthBoundaryGroup:
         return self.transformation_matrix
 
     def print_rowobjects(self):
-        print [object for object, idx in
-               sorted(self.lookuptable.items(), key=lambda x: x[1])]  # sorted list of objects along the row
+        # print [object for object, idx in
+        #        sorted(self.lookuptable.items(), key=lambda x: x[1])]  # sorted list of objects along the row
+        print [str(simplex) for simplex in self.ksimplices]
 
     def print_columnobjects(self):
         print [str(simplex) for simplex in self.kplus1_simplices]
@@ -88,9 +90,11 @@ class KthBoundaryGroup:
         Returns the string representation of the simplex along the row of the transformation matrix (k-simplex)
         :rtype: list
         """
-        row_objects = [object for object, idx in
-                       sorted(self.lookuptable.items(), key=lambda x: x[1])]  # sorted list of objects along the row
-        return [''.join([str(id) for id in eachtuple]) for eachtuple in row_objects]
+        # row_objects = []
+        # for object, idx in sorted(self.lookuptable.items(), key=lambda x: x[1]):
+        #     row_objects.append(object)
+        # return [''.join([str(id) for id in eachtuple]) for eachtuple in row_objects]
+        return [str(simplex) for simplex in self.ksimplices]
 
     def get_columnobjects(self):
         return [str(simplex) for simplex in self.kplus1_simplices]

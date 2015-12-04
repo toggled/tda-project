@@ -6,8 +6,8 @@ class KSimplex:
         self.id = -1  # This id is used as index while building transformation matrix
 
     def __str__(self):
-        # return self.name
-        return str(self.kvertices)
+        # return nice string representation of the k-simplex like 01, 12, 012, 1234 etc
+        return ''.join([str(i) for i in self.kvertices])
 
     def __eq__(self, other):
         '''
@@ -26,9 +26,10 @@ class SimplicialComplex:
         self.tableofksimplex = {}  # key = k , value = list of k-simplices in the simplicial_complex
         self.maxK = 0  # Keep track of highest Dimensional simplex in the complex
         self.count_id = {}  # for assigning unique id to each set of simplex
+        self.simplex_idmap = {}  # Although redundant. but it eliminates the need to maintain mapping inside BoundaryGroup
 
     def get_allkth_simplices(self, k):
-        return self.tableofksimplex.get(k, [])
+        return sorted([obj for obj in self.tableofksimplex.get(k, [])], key=lambda ob: ob.id)
 
     def add_simplex_fromfile(self, filename):
         '''
@@ -41,7 +42,8 @@ class SimplicialComplex:
                 line = fp.readline()
                 if not line:
                     break
-                ksimplex_obj = KSimplex([int(v) for v in line.split()])  # Building the K-simplex object
+                ksimplex_obj = KSimplex(sorted([int(v) for v in
+                                                line.split()]))  # Building the K-simplex object . Always insert them in sorted order to avoid orientation conflict between higher dimensional simplices.
                 self.add_simplex(ksimplex_obj)
 
     def add_simplex(self, ksimplex):
@@ -57,6 +59,9 @@ class SimplicialComplex:
             self.count_id[ksimplex.k] = 0
         self.tableofksimplex[ksimplex.k].append(ksimplex)
         ksimplex.id = self.count_id[ksimplex.k]  # assigning id
+        self.simplex_idmap[tuple(
+            ksimplex.kvertices)] = ksimplex.id  # Assign id to each added simplex. required when building delta matrix
+
         self.count_id[ksimplex.k] += 1  # increasing id for the next k-simplex's id to be id+1
 
         self.maxK = [self.maxK, ksimplex.k][

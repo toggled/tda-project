@@ -17,11 +17,13 @@ def colSwap(A, i, j):
 
 
 def scaleCol(A, i, c):
-    A[:, i] *= c * numpy.ones(A.shape[0])
+    # print (c * numpy.ones(A.shape[0], dtype = int)).dtype
+    # print A.dtype
+    A[:, i] *= c * numpy.ones(A.shape[0], dtype=int)
 
 
 def scaleRow(A, i, c):
-    A[i, :] *= c * numpy.ones(A.shape[1])
+    A[i, :] *= c * numpy.ones(A.shape[1], dtype=int)
 
 
 def colCombine(A, addTo, scaleCol, scaleAmt):
@@ -34,8 +36,8 @@ def rowCombine(A, addTo, scaleRow, scaleAmt):
 
 def simultaneousReduce(A, B):
     print 'inside simultaneous reduce\n'
-    print A.shape
-    print B.shape
+    # print A.shape
+    # print B.shape
     if A.shape[1] != B.shape[0]:
         raise Exception("Matrices have the wrong shape.")
 
@@ -62,8 +64,8 @@ def simultaneousReduce(A, B):
             print A
             print B
         pivot = A[i, j]
-        scaleCol(A, j, 1.0 / pivot)
-        scaleRow(B, j, 1.0 / pivot)
+        scaleCol(A, j, 1 * pivot)
+        scaleRow(B, j, 1 * pivot)
         print A
         print B
         for otherCol in range(0, numCols):
@@ -102,7 +104,7 @@ def finishRowReducing(B):
             rowSwap(B, i, nonzeroRow)
 
         pivot = B[i, j]
-        scaleRow(B, i, 1.0 / pivot)
+        scaleRow(B, i, 1 * pivot)
 
         for otherRow in range(0, numRows):
             if otherRow == i:
@@ -131,8 +133,8 @@ def bettiNumber(d_k, d_kplus1):
     A, B = numpy.copy(d_k), numpy.copy(d_kplus1)
 
     simultaneousReduce(A, B)
-    # print A
-    # print B
+    print A
+    print B
     finishRowReducing(B)
 
     print "After finish row reducing:\n", B
@@ -166,26 +168,52 @@ if __name__ == '__main__':
     '''
     bd0 = numpy.array([[0, 0, 0, 0]])
     # bd1 = numpy.array([[-1,0,0,-1,-1], [1,-1,0,0,0], [0,1,-1,0,1], [0,0,1,1,0]])
+    # bd1 = numpy.array([[-1,0,0,-1,-1,0], [1,-1,0,0,0,-1], [0,1,-1,0,1,0], [0,0,1,1,0,1]])
+
+    # bd1 = numpy.array([[1,-1,0,0,0,-1], [-1,0,0,1,-1,0], [0,1,-1,0,1,0], [0,0,1,-1,0,1]])
+
+    # bd2 = numpy.array([[0,0,1, -1, 1,0],[1,1,0,0,-1,0]]).T
+
+    bd2 = numpy.array([[0, 0, 1, -1, 1, 0]]).T
 
     # bd0 = numpy.array([[0,0,0,0,0]])
     # bd1 = numpy.array([[-1,0,0,-1,1], [1,-1,0,0,0], [0,1,-1,0,-1], [0,0,1,1,0], [0,0,0,0,0]])
-    bd1 = numpy.array(
-        [[-1, 0, 1, 1, 0, 1, 0, 0], [1, -1, 0, 0, 0, 0, -1, 0], [0, 1, -1, 0, 0, 0, 0, -1], [0, 0, 0, -1, -1, 0, 1, 1],
-         [0, 0, 0, 0, 1, -1, 0, 0]])
-    bd2 = numpy.array(
-        [[1, 0, 0, 1], [1, 0, 1, 0], [1, -1, 0, 0], [0, 1, 0, 1], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, -1, 1],
-         [0, 1, 1, 0]])
+    # bd1 = numpy.array(
+    #     [[-1, 0, 1, 1, 0, 1, 0, 0], [1, -1, 0, 0, 0, 0, -1, 0], [0, 1, -1, 0, 0, 0, 0, -1], [0, 0, 0, -1, -1, 0, 1, 1],
+    #      [0, 0, 0, 0, 1, -1, 0, 0]])
+    # bd2 = numpy.array(
+    #     [[1, 0, 0, 1], [1, 0, 1, 0], [1, -1, 0, 0], [0, 1, 0, 1], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, -1, 1],
+    #      [0, 1, 1, 0]])
+    # bd 1 = numpy.array([[-1,0,0,-1,-1], [1,-1,0,0,0], [0,1,-1,0,1], [0,0,1,1,0]])
+
+    bd1 = numpy.array([[-1, 0, 0, 0, -1, 0, -1, -1],
+                       [1, -1, 0, 0, 0, -1, 0, 0],
+                       [0, 1, -1, 0, 0, 0, 1, 0],
+                       [0, 0, 1, -1, 0, 1, 0, 1],
+                       [0, 0, 0, 1, 1, 0, 0, 0]])
+    bd2 = numpy.array([[1],
+                       [1],
+                       [0],
+                       [0],
+                       [0],
+                       [0],
+                       [-1],
+                       [0]])
+
     print("Example complex from post")
     # print("0th homology: %d" % bettiNumber(bd0,bd1))
     # print "another way to compute betti number: ",another_bettinum(bd1,bd2)
     # print Matrix(bd1.T).rref()
 
     print("1st homology: %d" % bettiNumber(bd1, bd2))
-    print "another way to compute betti number: ", another_bettinum(bd1, bd2)
-    sys.exit(1)
-    print("2nd homology: %d" % bettiNumber(bd2, bd3))
-    print "another way to compute betti number: ", another_bettinum(bd2, bd3)
+    #print "another way to compute betti number: ", another_bettinum(bd1, bd2)
 
+    # print("2nd homology: %d" % bettiNumber(bd2, bd3))
+    # print "another way to compute betti number: ", another_bettinum(bd2, bd3)
+
+    import sys
+
+    sys.exit(1)
     mobiusD1 = numpy.array([
         [-1, -1, -1, -1, 0, 0, 0, 0, 0, 0],
         [1, 0, 0, 0, -1, -1, -1, 0, 0, 0],
